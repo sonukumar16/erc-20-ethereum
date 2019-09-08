@@ -1,1 +1,1 @@
-# erc-20-ethereum uisng truffle 
+# erc-20-ethereum using truffle 

@@ -184,6 +184,4 @@ contract('MyToken', (accounts) => {
     const allowance = await mytoken.allowance(fromAccount, spendingAccount);
     assert.equal(allowance.toNumber(), 0, 'deduct the amount from the allowance');
   });
- 
-
 });
