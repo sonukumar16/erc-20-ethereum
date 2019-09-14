@@ -79,4 +79,27 @@ contract('MyTokenSale', (accounts) => {
       );
     }
   });
+  it('End the token sale', async () => {
+    const [, buyer] = accounts;
+    try {
+      await myTokenSale.endSale({ from: buyer });
+    } catch (error) {
+      assert.equal(
+        error.reason,
+        'Only Admin can destroy the token sale',
+        'must be admin to end the sale '
+      );
+    }
+
+    await myTokenSale.endSale({ from: admin });
+    const adminBalance = await myToken.balanceOf(admin);
+    assert.equal(
+      adminBalance.toNumber(),
+      999990,
+      'return all unsold tokens to admin'
+    );
+    // Check that the contract has no balance
+    balance = await web3.eth.getBalance(myTokenSale.address);
+    assert.equal(balance, 0, 'contract has no balance');
+  });
 });

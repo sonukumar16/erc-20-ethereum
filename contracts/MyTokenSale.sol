@@ -10,7 +10,7 @@
 import "./MyToken.sol";
 
 contract MyTokenSale {
-    address admin;
+    address payable admin;
     MyToken public tokenContract;
     uint256 public tokenPrice;
     uint256 public tokensSold;
@@ -32,13 +32,26 @@ contract MyTokenSale {
         // Require that value is equal to tokens
         require(msg.value == _numberOfTokens * tokenPrice, 'should value is equal to tokens price');
         // Reqquire that the contract has enough tokens
-        require(tokenContract.balanceOf(this) >= _numberOfTokens);
+        require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
         // Require that a transfer is successful
         require(tokenContract.transfer(msg.sender,_numberOfTokens));
         // Keep track of tokensSold
         tokensSold += _numberOfTokens;
         // Trigger sell Event
        emit Sell(msg.sender, _numberOfTokens);
+    }
+
+    // End token MyTokenSale 
+    function endSale() public {
+        // sender can only do
+        require(msg.sender == admin,'Only Admin can destroy the token sale');
+        // Transfer remaining token to admin
+        require(tokenContract.transfer(admin,tokenContract.balanceOf(address(this))));
+        // Destroy contract
+        //selfdestruct(admin);
+        // UPDATE: Let's not destroy the contract here
+        // Just transfer the balance to the admin
+        admin.transfer(address(this).balance);
     }
 
 }
